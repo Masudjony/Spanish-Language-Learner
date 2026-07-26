@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spanish Practice</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #232B45;
+            --bg-accent: #394066;
+            --accent-color: #FAD4B2;
+            --accent-glow: rgba(250, 212, 178, 0.3);
+            --text-color: #FFFFFF;
+            --subtext-color: rgba(255, 255, 255, 0.75);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --translation-color: #ffeb3b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 0%, #394066 0%, #232B45 75%);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Custom Interactive Cursor Follower */
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.2s ease;
+        }
+
+        .cursor-follower {
+            width: 38px;
+            height: 38px;
+            border: 2px solid var(--accent-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            z-index: 9998;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .cursor-follower.hover {
+            width: 58px;
+            height: 58px;
+            background-color: rgba(250, 212, 178, 0.12);
+            border-color: var(--accent-color);
+        }
+
+        /* Background Animated Glow Blobs */
+        .hero-bg-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            animation: floatBlob 12s infinite alternate ease-in-out;
+        }
+
+        .blob-peach {
+            width: 400px;
+            height: 400px;
+            background: #FAD4B2;
+            top: -100px;
+            left: -100px;
+        }
+
+        .blob-blue {
+            width: 450px;
+            height: 450px;
+            background: #4a5d9e;
+            bottom: -150px;
+            right: -100px;
+            animation-delay: -6s;
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 50px) scale(1.1); }
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 780px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px 35px;
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header Elements */
+        .badge {
+            display: inline-block;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            background: rgba(250, 212, 178, 0.1);
+            border: 1px solid rgba(250, 212, 178, 0.3);
+            padding: 6px 16px;
+            border-radius: 50px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--subtext-color);
+            margin-bottom: 28px;
+        }
+
+        /* Action Controls */
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 220px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            color: var(--text-color);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        button.btn-shuffle {
+            padding: 16px 30px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: none;
+            border-radius: 14px;
+            background: var(--accent-color);
+            color: #1a2035;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(250, 212, 178, 0.25);
+        }
+
+        button.btn-shuffle:hover {
+            background: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.35);
+        }
+
+        button.btn-shuffle:active {
+            transform: translateY(0);
+        }
+
+        /* Demo Cards Grid */
+        #demo {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .word {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            padding: 15px;
+            background-color: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            letter-spacing: 0.5px;
+            width: calc(33.33% - 16px);
+            min-width: 170px;
+            height: 80px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        background-color 0.3s ease, 
+                        border-color 0.3s ease, 
+                        box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .word:hover {
+            background-color: rgba(250, 212, 178, 0.12);
+            border-color: rgba(250, 212, 178, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(250, 212, 178, 0.15);
+        }
+
+        .audio-icon {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 11px;
+            opacity: 0.4;
+            transition: opacity 0.3s ease;
+        }
+
+        .word:hover .audio-icon {
+            opacity: 0.9;
+        }
+
+        .es-word {
+            transition: transform 0.3s ease;
+        }
+
+        .word:hover .es-word {
+            transform: translateY(-10px);
+        }
+
+        .word .translation {
+            position: absolute;
+            bottom: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--translation-color);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .word:hover .translation {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--subtext-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stats-item span {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            .word {
+                width: calc(50% - 16px);
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .container {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Ambient Glow Background Blobs -->
+    <div class="hero-bg-elements">
+        <div class="bg-blob blob-peach"></div>
+        <div class="bg-blob blob-blue"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-follower" id="cursor-follower"></div>
+
+    <div class="container">
+        <div class="badge">Masud Jony Edition</div>
+        <h1>Spanish Practice</h1>
+        <p class="subtitle">Hover any word card for English translation • Tap card to hear Spanish pronunciation</p>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search words in Spanish or English..." oninput="filterWords()">
+            </div>
+            <button class="btn-shuffle" onclick="shuffleWords()">
+                <span>Shuffle Words</span> ↻
+            </button>
+        </div>
+
+        <div id="demo"></div>
+
+        <div class="stats-bar">
+            <div class="stats-item">Cards: <span id="wordCount">0</span></div>
+            <div class="stats-item">Audio: <span>🔊 Web Speech Active</span></div>
+            <div class="stats-item">Hover Mode: <span>Isolated Animation</span></div>
+        </div>
+    </div>
+
+    <script>
+        const spanishWords = [
+            { es: "hola", en: "Hello" },
+            { es: "casa", en: "House" },
+            { es: "mesa", en: "Table" },
+            { es: "agua", en: "Water" },
+            { es: "cocina", en: "Kitchen" },
+            { es: "pollo", en: "Chicken" },
+            { es: "queso", en: "Cheese" },
+            { es: "niño", en: "Boy / Child" },
+            { es: "Adiós", en: "Goodbye" },
+            { es: "Por favor", en: "Please" },
+            { es: "Gracias", en: "Thank you" },
+            { es: "Lo siento", en: "I'm sorry" },
+            { es: "Sí", en: "Yes" },
+            { es: "No", en: "No" },
+            { es: "Bueno", en: "Good" },
+            { es: "Malo", en: "Bad" }
+        ];
+
+        let currentWords = [...spanishWords];
+
+        // Custom Cursor Follower
+        const cursorDot = document.getElementById("cursor-dot");
+        const cursorFollower = document.getElementById("cursor-follower");
+
+        document.addEventListener("mousemove", (e) => {
+            cursorDot.style.left = e.clientX + "px";
+            cursorDot.style.top = e.clientY + "px";
+
+            cursorFollower.animate({
+                left: e.clientX + "px",
+                top: e.clientY + "px"
+            }, { duration: 250, fill: "forwards" });
+        });
+
+        document.addEventListener("mouseover", (e) => {
+            if (e.target.closest("button, .word, input")) {
+                cursorFollower.classList.add("hover");
+            } else {
+                cursorFollower.classList.remove("hover");
+            }
+        });
+
+        // Speech Synthesis Pronunciation
+        function speakWord(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop any active speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function renderWords(words) {
+            const demoDiv = document.getElementById("demo");
+            document.getElementById("wordCount").textContent = words.length;
+
+            if (words.length === 0) {
+                demoDiv.innerHTML = `<p style="color: var(--subtext-color); margin: 20px 0;">No matching words found.</p>`;
+                return;
+            }
+
+            demoDiv.innerHTML = words.map(item => `
+                <div class="word" title="${item.en}" onclick="speakWord('${item.es.replace(/'/g, "\\'")}')">
+                    <span class="audio-icon">🔊</span>
+                    <span class="es-word">${item.es}</span>
+                    <span class="translation">${item.en}</span>
+                </div>
+            `).join("");
+        }
+
+        function shuffleWords() {
+            const shuffled = [...currentWords];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            currentWords = shuffled;
+            renderWords(currentWords);
+        }
+
+        function filterWords() {
+            const query = document.getElementById("searchInput").value.toLowerCase().trim();
+            const filtered = spanishWords.filter(item => 
+                item.es.toLowerCase().includes(query) || item.en.toLowerCase().includes(query)
+            );
+            currentWords = filtered;
+            renderWords(currentWords);
+        }
+
+        renderWords(currentWords);
+    </script>
+</body>
+
+</html>
