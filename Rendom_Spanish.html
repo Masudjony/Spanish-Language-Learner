@@ -9,7 +9,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;800;900&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -118,14 +120,19 @@
         }
 
         @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(40px, 50px) scale(1.1); }
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(40px, 50px) scale(1.1);
+            }
         }
 
         /* Main Container */
         .container {
             width: 100%;
-            max-width: 780px;
+            max-width: 98%;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(20px);
@@ -256,13 +263,14 @@
             letter-spacing: 0.5px;
             width: calc(33.33% - 16px);
             min-width: 170px;
+            max-width: 200px;
             height: 80px;
             position: relative;
             cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                        background-color 0.3s ease, 
-                        border-color 0.3s ease, 
-                        box-shadow 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -317,6 +325,121 @@
             transform: translateY(0);
         }
 
+        /* Add Word Form Card */
+        .add-word-card {
+            background: rgba(0, 0, 0, 0.22);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: left;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-word-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 220px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-color);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 12px var(--accent-glow);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        button.btn-add {
+            padding: 14px 24px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            background: var(--accent-color);
+            color: #1a2035;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(250, 212, 178, 0.2);
+        }
+
+        button.btn-add:hover {
+            background: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.35);
+        }
+
+        button.btn-add:active {
+            transform: translateY(0);
+        }
+
+        .auto-translate-hint {
+            font-size: 0.78rem;
+            color: var(--subtext-color);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Delete Button on Cards */
+        .delete-btn {
+            position: absolute;
+            top: 6px;
+            left: 8px;
+            font-size: 13px;
+            opacity: 0;
+            cursor: pointer;
+            transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 2px 6px;
+            border-radius: 50%;
+            z-index: 5;
+        }
+
+        .word:hover .delete-btn {
+            opacity: 0.7;
+        }
+
+        .delete-btn:hover {
+            opacity: 1 !important;
+            color: #ff6b6b;
+            transform: scale(1.2);
+        }
+
         /* Stats Bar */
         .stats-bar {
             margin-top: 30px;
@@ -340,11 +463,21 @@
             .word {
                 width: calc(50% - 16px);
             }
+
             h1 {
                 font-size: 1.8rem;
             }
+
             .container {
                 padding: 25px 20px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            button.btn-add {
+                width: 100%;
             }
         }
     </style>
@@ -363,30 +496,51 @@
     <div class="cursor-follower" id="cursor-follower"></div>
 
     <div class="container">
-        <div class="badge">Masud Jony Edition</div>
-        <h1>Spanish Practice</h1>
-        <p class="subtitle">Hover any word card for English translation • Tap card to hear Spanish pronunciation</p>
+        <!-- <div class="badge">Masud Jony Edition</div> -->
+        <!-- <h1>Spanish Practice</h1>
+        <p class="subtitle">Hover any word card for English translation • Tap card to hear Spanish pronunciation</p> -->
 
-        <div class="controls">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search words in Spanish or English..." oninput="filterWords()">
+        <!-- Add New Word Box -->
+        <!-- <div class="add-word-card">
+            <h3><span>⚡</span> Auto-Translate & Add Word</h3>
+
+        </div> -->
+
+        <div style="display: flow-root; width: 100%; padding-bottom: 100px;">
+            <form id="addWordForm" onsubmit="handleAddWord(event)" style="float: left;">
+                <div class="input-group">
+                    <input type="text" id="newEsWord" placeholder="Enter Spanish word (e.g., perro, sol, amigo)..."
+                        required autocomplete="off">
+                    <button type="submit" class="btn-add" id="btnAddWord">
+                        <span>Add Word</span> ➕
+                    </button>
+                </div>
+                <!-- <div class="auto-translate-hint">✨ Type any Spanish word and click Add — translation & audio will be
+                    added automatically!</div> -->
+            </form>
+
+            <div class="controls" style="float: right;">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search words in Spanish or English..."
+                        oninput="filterWords()">
+                </div>
+                <button class="btn-shuffle" onclick="shuffleWords()">
+                    <span>Shuffle Words</span> ↻
+                </button>
             </div>
-            <button class="btn-shuffle" onclick="shuffleWords()">
-                <span>Shuffle Words</span> ↻
-            </button>
         </div>
 
         <div id="demo"></div>
 
         <div class="stats-bar">
-            <div class="stats-item">Cards: <span id="wordCount">0</span></div>
-            <div class="stats-item">Audio: <span>🔊 Web Speech Active</span></div>
-            <div class="stats-item">Hover Mode: <span>Isolated Animation</span></div>
+            <div class="stats-item">Words: <span id="wordCount">0</span></div>
+            <!-- <div class="stats-item">Audio: <span>🔊 Web Speech Active</span></div>
+            <div class="stats-item">Hover Mode: <span>Isolated Animation</span></div> -->
         </div>
     </div>
 
     <script>
-        const spanishWords = [
+        const initialSpanishWords = [
             { es: "hola", en: "Hello" },
             { es: "casa", en: "House" },
             { es: "mesa", en: "Table" },
@@ -405,6 +559,23 @@
             { es: "Malo", en: "Bad" }
         ];
 
+        function loadWords() {
+            const saved = localStorage.getItem("custom_spanish_words");
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    return [...initialSpanishWords];
+                }
+            }
+            return [...initialSpanishWords];
+        }
+
+        function saveWordsToLocalStorage() {
+            localStorage.setItem("custom_spanish_words", JSON.stringify(spanishWords));
+        }
+
+        let spanishWords = loadWords();
         let currentWords = [...spanishWords];
 
         // Custom Cursor Follower
@@ -449,13 +620,62 @@
                 return;
             }
 
-            demoDiv.innerHTML = words.map(item => `
-                <div class="word" title="${item.en}" onclick="speakWord('${item.es.replace(/'/g, "\\'")}')">
-                    <span class="audio-icon">🔊</span>
-                    <span class="es-word">${item.es}</span>
-                    <span class="translation">${item.en}</span>
-                </div>
-            `).join("");
+            demoDiv.innerHTML = words.map(item => {
+                const realIndex = spanishWords.indexOf(item);
+                return `
+                    <div class="word" title="${item.en}" onclick="speakWord('${item.es.replace(/'/g, "\\'")}')">
+                        <span class="delete-btn" onclick="deleteWord(event, ${realIndex})" title="Delete word">✕</span>
+                        <span class="audio-icon">🔊</span>
+                        <span class="es-word">${item.es}</span>
+                        <span class="translation">${item.en}</span>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function deleteWord(event, index) {
+            event.stopPropagation();
+            if (index >= 0 && index < spanishWords.length) {
+                spanishWords.splice(index, 1);
+                saveWordsToLocalStorage();
+                filterWords();
+            }
+        }
+
+        async function handleAddWord(event) {
+            event.preventDefault();
+            const esInput = document.getElementById("newEsWord");
+            const btnAdd = document.getElementById("btnAddWord");
+
+            const es = esInput.value.trim();
+            if (!es) return;
+
+            btnAdd.disabled = true;
+            btnAdd.innerHTML = `<span>Translating...</span> ⏳`;
+
+            let en = es;
+            try {
+                const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(es)}&langpair=es|en`);
+                const data = await res.json();
+                if (data && data.responseData && data.responseData.translatedText) {
+                    en = data.responseData.translatedText;
+                }
+            } catch (err) {
+                console.error("Translation error:", err);
+            } finally {
+                btnAdd.disabled = false;
+                btnAdd.innerHTML = `<span>Add Word</span> ➕`;
+            }
+
+            const newWordObj = { es, en };
+            spanishWords.unshift(newWordObj);
+            saveWordsToLocalStorage();
+
+            esInput.value = "";
+            document.getElementById("searchInput").value = "";
+            filterWords();
+
+            speakWord(es);
         }
 
         function shuffleWords() {
@@ -470,7 +690,7 @@
 
         function filterWords() {
             const query = document.getElementById("searchInput").value.toLowerCase().trim();
-            const filtered = spanishWords.filter(item => 
+            const filtered = spanishWords.filter(item =>
                 item.es.toLowerCase().includes(query) || item.en.toLowerCase().includes(query)
             );
             currentWords = filtered;
