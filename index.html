@@ -662,7 +662,7 @@
                     <input type="text" id="newEsWord" placeholder="Enter Spanish word (e.g., perro, sol, amigo)..."
                         required autocomplete="off">
                     <button type="submit" class="btn-add" id="btnAddWord">
-                        <span>Add Word</span> ➕
+                        <span>Add Word</span>
                     </button>
                 </div>
                 <!-- <div class="auto-translate-hint">✨ Type any Spanish word and click Add — translation & audio will be
@@ -883,7 +883,7 @@
                 console.error("Translation error:", err);
             } finally {
                 btnAdd.disabled = false;
-                btnAdd.innerHTML = `<span>Add Word</span> ➕`;
+                btnAdd.innerHTML = `<span>Add Word</span>`;
             }
 
             const newWordObj = { es, en };
