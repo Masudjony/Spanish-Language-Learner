@@ -415,7 +415,7 @@
             gap: 4px;
         }
 
-        /* Delete Button on Cards */
+        /* Delete & Edit Buttons on Cards */
         .delete-btn {
             position: absolute;
             top: 6px;
@@ -430,14 +430,164 @@
             z-index: 5;
         }
 
-        .word:hover .delete-btn {
-            opacity: 0.7;
+        .edit-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 0;
+            font-size: 13px;
+            opacity: 0;
+            cursor: pointer;
+            transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
+            color: rgba(255, 255, 255, 1);
+            padding: 2px 6px;
+            border-radius: 50%;
+            z-index: 5;
+        }
+
+        .word:hover .delete-btn,
+        .word:hover .edit-btn {
+            opacity: 1;
         }
 
         .delete-btn:hover {
             opacity: 1 !important;
             color: #ff6b6b;
             transform: scale(1.2);
+        }
+
+        .edit-btn:hover {
+            opacity: 1 !important;
+            color: var(--accent-color);
+            transform: scale(1.2);
+        }
+
+        /* Edit Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 20, 35, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: rgba(35, 43, 69, 0.95);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px var(--accent-glow);
+            border-radius: 20px;
+            padding: 28px;
+            width: 90%;
+            max-width: 440px;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .modal-close {
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #ff6b6b;
+        }
+
+        .modal-body label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--subtext-color);
+            margin-bottom: 6px;
+            text-align: left;
+        }
+
+        .modal-body input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #fff;
+            margin-bottom: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .modal-body input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-cancel {
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-save {
+            padding: 10px 20px;
+            background: var(--accent-color);
+            border: none;
+            color: #1a2035;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-save:hover {
+            background: #ffffff;
+            transform: translateY(-1px);
         }
 
         /* Stats Bar */
@@ -496,6 +646,15 @@
     <div class="cursor-follower" id="cursor-follower"></div>
 
     <div class="container">
+        <!-- <div class="badge">Masud Jony Edition</div> -->
+        <!-- <h1>Spanish Practice</h1>
+        <p class="subtitle">Hover any word card for English translation • Tap card to hear Spanish pronunciation</p> -->
+
+        <!-- Add New Word Box -->
+        <!-- <div class="add-word-card">
+            <h3><span>⚡</span> Auto-Translate & Add Word</h3>
+
+        </div> -->
 
         <div style="display: flow-root; width: 100%; padding-bottom: 100px;">
             <form id="addWordForm" onsubmit="handleAddWord(event)" style="float: left;">
@@ -506,6 +665,8 @@
                         <span>Add Word</span> ➕
                     </button>
                 </div>
+                <!-- <div class="auto-translate-hint">✨ Type any Spanish word and click Add — translation & audio will be
+                    added automatically!</div> -->
             </form>
 
             <div class="controls" style="float: right;">
@@ -523,6 +684,31 @@
 
         <div class="stats-bar">
             <div class="stats-item">Words: <span id="wordCount">0</span></div>
+            <!-- <div class="stats-item">Audio: <span>🔊 Web Speech Active</span></div>
+            <div class="stats-item">Hover Mode: <span>Isolated Animation</span></div> -->
+        </div>
+    </div>
+
+    <!-- Edit Word Modal -->
+    <div class="modal-overlay" id="editModal" onclick="if(event.target===this) closeEditModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Edit Word & Meaning</h3>
+                <span class="modal-close" onclick="closeEditModal()">✕</span>
+            </div>
+            <form onsubmit="saveEditWord(event)">
+                <div class="modal-body">
+                    <label for="editEsWord">Spanish Word</label>
+                    <input type="text" id="editEsWord" required autocomplete="off">
+
+                    <label for="editEnMeaning">English Meaning</label>
+                    <input type="text" id="editEnMeaning" required autocomplete="off">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-save">Save Changes 💾</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -612,6 +798,7 @@
                 return `
                     <div class="word" title="${item.en}" onclick="speakWord('${item.es.replace(/'/g, "\\'")}')">
                         <span class="delete-btn" onclick="deleteWord(event, ${realIndex})" title="Delete word">✕</span>
+                        <span class="edit-btn" onclick="openEditModal(event, ${realIndex})" title="Edit word / meaning">✏️</span>
                         <span class="audio-icon">🔊</span>
                         <span class="es-word">${item.es}</span>
                         <span class="translation">${item.en}</span>
@@ -628,6 +815,51 @@
                 filterWords();
             }
         }
+
+        let editingIndex = -1;
+
+        function openEditModal(event, index) {
+            event.stopPropagation();
+            editingIndex = index;
+            const wordObj = spanishWords[index];
+            if (!wordObj) return;
+
+            document.getElementById("editEsWord").value = wordObj.es;
+            document.getElementById("editEnMeaning").value = wordObj.en;
+
+            document.getElementById("editModal").classList.add("active");
+            setTimeout(() => {
+                document.getElementById("editEnMeaning").focus();
+                document.getElementById("editEnMeaning").select();
+            }, 100);
+        }
+
+        function closeEditModal() {
+            document.getElementById("editModal").classList.remove("active");
+            editingIndex = -1;
+        }
+
+        function saveEditWord(event) {
+            event.preventDefault();
+            if (editingIndex < 0 || editingIndex >= spanishWords.length) return;
+
+            const updatedEs = document.getElementById("editEsWord").value.trim();
+            const updatedEn = document.getElementById("editEnMeaning").value.trim();
+
+            if (updatedEs && updatedEn) {
+                spanishWords[editingIndex].es = updatedEs;
+                spanishWords[editingIndex].en = updatedEn;
+                saveWordsToLocalStorage();
+                filterWords();
+                closeEditModal();
+            }
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeEditModal();
+            }
+        });
 
         async function handleAddWord(event) {
             event.preventDefault();
