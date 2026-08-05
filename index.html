@@ -132,7 +132,7 @@
         /* Main Container */
         .container {
             width: 100%;
-            max-width: 98%;
+            max-width: 780px;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(20px);
@@ -243,6 +243,89 @@
             transform: translateY(0);
         }
 
+        /* Sync & Share Toolbar */
+        .sync-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-sync-action {
+            padding: 10px 18px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-sync-action:hover {
+            background: rgba(250, 212, 178, 0.18);
+            border-color: var(--accent-color);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(250, 212, 178, 0.25);
+        }
+
+        .btn-sync-action:active {
+            transform: translateY(0);
+        }
+
+        .btn-share-main {
+            background: rgba(250, 212, 178, 0.22);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .btn-share-main:hover {
+            background: var(--accent-color);
+            color: #1a2035;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(35, 43, 69, 0.96);
+            border: 1px solid var(--accent-color);
+            color: #ffffff;
+            padding: 14px 26px;
+            border-radius: 50px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow);
+            font-size: 0.92rem;
+            font-weight: 600;
+            z-index: 99999;
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            max-width: 90vw;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
         /* Demo Cards Grid */
         #demo {
             display: flex;
@@ -263,7 +346,6 @@
             letter-spacing: 0.5px;
             width: calc(33.33% - 16px);
             min-width: 170px;
-            max-width: 200px;
             height: 80px;
             position: relative;
             cursor: pointer;
@@ -646,46 +728,63 @@
     <div class="cursor-follower" id="cursor-follower"></div>
 
     <div class="container">
-        <!-- <div class="badge">Masud Jony Edition</div> -->
-        <!-- <h1>Spanish Practice</h1>
-        <p class="subtitle">Hover any word card for English translation • Tap card to hear Spanish pronunciation</p> -->
+        <div class="badge">Masud Jony Edition</div>
+        <h1>Spanish Practice</h1>
+        <p class="subtitle">Hover any word card for English translation • Tap card to hear Spanish pronunciation</p>
+
+        <!-- Sync & Share Toolbar -->
+        <div class="sync-toolbar">
+            <button type="button" class="btn-sync-action btn-share-main" onclick="copyShareLink()">
+                <span>🔗 Share My List Link</span>
+            </button>
+            <button type="button" class="btn-sync-action" onclick="pullFromCloudSync(true)">
+                <span>🔄 Sync Now</span>
+            </button>
+            <button type="button" class="btn-sync-action" onclick="exportWordsJSON()">
+                <span>📥 Export JSON</span>
+            </button>
+            <label class="btn-sync-action" style="cursor: pointer;">
+                <span>📤 Import JSON</span>
+                <input type="file" id="importJsonInput" accept=".json" onchange="importWordsJSON(event)"
+                    style="display: none;">
+            </label>
+            <button type="button" class="btn-sync-action" onclick="resetToDefaultWords()">
+                <span>🔄 Reset</span>
+            </button>
+        </div>
 
         <!-- Add New Word Box -->
-        <!-- <div class="add-word-card">
+        <div class="add-word-card">
             <h3><span>⚡</span> Auto-Translate & Add Word</h3>
-
-        </div> -->
-
-        <div style="display: flow-root; width: 100%; padding-bottom: 100px;">
-            <form id="addWordForm" onsubmit="handleAddWord(event)" style="float: left;">
+            <form id="addWordForm" onsubmit="handleAddWord(event)">
                 <div class="input-group">
-                    <input type="text" id="newEsWord" placeholder="Enter Spanish word (e.g., perro, sol, amigo)..."
-                        required autocomplete="off">
+                    <input type="text" id="newEsWord" placeholder="Enter word (e.g., perro, sol, amigo)..." required
+                        autocomplete="off">
                     <button type="submit" class="btn-add" id="btnAddWord">
                         <span>Add Word</span>
                     </button>
                 </div>
-                <!-- <div class="auto-translate-hint">✨ Type any Spanish word and click Add — translation & audio will be
-                    added automatically!</div> -->
+                <div class="auto-translate-hint">✨ Type any Spanish word and click Add — translation & audio will be
+                    added automatically!</div>
             </form>
+        </div>
 
-            <div class="controls" style="float: right;">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Search words in Spanish or English..."
-                        oninput="filterWords()">
-                </div>
-                <button class="btn-shuffle" onclick="shuffleWords()">
-                    <span>Shuffle Words</span>
-                </button>
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search words in Spanish or English..."
+                    oninput="filterWords()">
             </div>
+            <button class="btn-shuffle" onclick="shuffleWords()">
+                <span>Shuffle Words</span>
+            </button>
         </div>
 
         <div id="demo"></div>
 
         <div class="stats-bar">
-            <div class="stats-item">Words: <span id="wordCount">0</span></div>
-            <!-- <div class="stats-item">Audio: <span>🔊 Web Speech Active</span></div>
-            <div class="stats-item">Hover Mode: <span>Isolated Animation</span></div> -->
+            <div class="stats-item">Cards: <span id="wordCount">0</span></div>
+            <div class="stats-item">Audio: <span>🔊 Web Speech Active</span></div>
+            <div class="stats-item">Cloud Sync: <span id="cloudSyncBadge">🟢 Live Cloud Synced</span></div>
         </div>
     </div>
 
@@ -712,7 +811,28 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
     <script>
+        // Broadcast Channel for live cross-tab sync on the same browser
+        const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('spanish_words_sync') : null;
+
+        if (syncChannel) {
+            syncChannel.onmessage = (event) => {
+                if (event.data && Array.isArray(event.data)) {
+                    spanishWords = event.data;
+                    filterWords();
+                }
+            };
+        }
+
+        function notifyTabSync() {
+            if (syncChannel) {
+                syncChannel.postMessage(spanishWords);
+            }
+        }
+
         const initialSpanishWords = [
             { es: "hola", en: "Hello" },
             { es: "casa", en: "House" },
@@ -744,9 +864,117 @@
             return [...initialSpanishWords];
         }
 
+        // Cloud Sync API Config
+        const CLOUD_API_BASE = 'https://api.restful-api.dev/objects';
+        const DEFAULT_CLOUD_SYNC_ID = 'ff8081819f7e10ae019fd07ff1f27648';
+
+        function getCloudSyncId() {
+            return localStorage.getItem("custom_spanish_cloud_id") || DEFAULT_CLOUD_SYNC_ID;
+        }
+
+        let isSyncingWithCloud = false;
+
+        function updateSyncBadge(status) {
+            const badge = document.getElementById("cloudSyncBadge");
+            if (!badge) return;
+
+            if (status === "online") {
+                badge.innerHTML = `<span style="color: #4caf50; font-weight: 700;">🟢 Live Cloud Synced</span>`;
+            } else if (status === "syncing") {
+                badge.innerHTML = `<span style="color: #ffb74d; font-weight: 700;">⏳ Syncing...</span>`;
+            } else if (status === "error" || status === "offline") {
+                badge.innerHTML = `<span style="color: #ef5350; font-weight: 700;">🔴 Offline (Saved Locally)</span>`;
+            }
+        }
+
+        async function pushToCloudSync() {
+            const syncId = getCloudSyncId();
+            if (!syncId || isSyncingWithCloud) return;
+
+            isSyncingWithCloud = true;
+            updateSyncBadge("syncing");
+
+            try {
+                const res = await fetch(`${CLOUD_API_BASE}/${syncId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'masud_spanish_words_global_v1',
+                        data: { words: spanishWords, updatedAt: Date.now() }
+                    })
+                });
+
+                if (res.ok) {
+                    updateSyncBadge("online");
+                } else {
+                    updateSyncBadge("error");
+                }
+            } catch (err) {
+                console.error("Cloud push error:", err);
+                updateSyncBadge("offline");
+            } finally {
+                isSyncingWithCloud = false;
+            }
+        }
+
+        async function pullFromCloudSync(showToastOnNew = true) {
+            const syncId = getCloudSyncId();
+            if (!syncId) return;
+
+            try {
+                const res = await fetch(`${CLOUD_API_BASE}/${syncId}`);
+                if (!res.ok) return;
+
+                const result = await res.json();
+                if (result && result.data && Array.isArray(result.data.words)) {
+                    const cloudWords = result.data.words.filter(item => item && item.es && item.en);
+
+                    const localJson = JSON.stringify(spanishWords);
+                    const cloudJson = JSON.stringify(cloudWords);
+
+                    if (localJson !== cloudJson) {
+                        // Don't interrupt if user is actively editing in modal
+                        if (typeof editingIndex !== 'undefined' && editingIndex !== -1) {
+                            return;
+                        }
+
+                        spanishWords = cloudWords;
+                        localStorage.setItem("custom_spanish_words", JSON.stringify(spanishWords));
+                        notifyTabSync();
+                        filterWords();
+
+                        if (showToastOnNew) {
+                            showToast(`✨ Live Cloud Sync: Words & translations updated!`);
+                        }
+                    }
+                    updateSyncBadge("online");
+                }
+            } catch (err) {
+                console.error("Cloud pull error:", err);
+                updateSyncBadge("offline");
+            }
+        }
+
         function saveWordsToLocalStorage() {
             localStorage.setItem("custom_spanish_words", JSON.stringify(spanishWords));
+            notifyTabSync();
+            pushToCloudSync();
         }
+
+        // Automatic background polling every 3.5 seconds
+        setInterval(() => {
+            pullFromCloudSync(true);
+        }, 3500);
+
+        // Pull immediately when browser tab or window gains focus
+        window.addEventListener("focus", () => {
+            pullFromCloudSync(true);
+        });
+
+        // Pull from Cloud on initial page load
+        setTimeout(() => {
+            pullFromCloudSync(false);
+        }, 300);
 
         let spanishWords = loadWords();
         let currentWords = [...spanishWords];
@@ -847,11 +1075,18 @@
             const updatedEn = document.getElementById("editEnMeaning").value.trim();
 
             if (updatedEs && updatedEn) {
+                const duplicateIndex = spanishWords.findIndex((w, idx) => idx !== editingIndex && w.es.trim().toLowerCase() === updatedEs.toLowerCase());
+                if (duplicateIndex !== -1) {
+                    showToast(`⚠️ Word "${updatedEs}" already exists in your list!`, 4000);
+                    return;
+                }
+
                 spanishWords[editingIndex].es = updatedEs;
                 spanishWords[editingIndex].en = updatedEn;
                 saveWordsToLocalStorage();
                 filterWords();
                 closeEditModal();
+                showToast(`✏️ Updated "${updatedEs}"`);
             }
         }
 
@@ -868,6 +1103,21 @@
 
             const es = esInput.value.trim();
             if (!es) return;
+
+            // Duplicate Word Validation Check
+            const duplicateIndex = spanishWords.findIndex(w => w.es.trim().toLowerCase() === es.toLowerCase());
+            if (duplicateIndex !== -1) {
+                const existingWord = spanishWords[duplicateIndex];
+                showToast(`⚠️ "${existingWord.es}" is already in your word list! (${existingWord.en})`, 4000);
+                esInput.focus();
+                esInput.style.borderColor = '#ff6b6b';
+                esInput.style.boxShadow = '0 0 12px rgba(255, 107, 107, 0.5)';
+                setTimeout(() => {
+                    esInput.style.borderColor = '';
+                    esInput.style.boxShadow = '';
+                }, 2500);
+                return;
+            }
 
             btnAdd.disabled = true;
             btnAdd.innerHTML = `<span>Translating...</span> ⏳`;
@@ -895,6 +1145,7 @@
             filterWords();
 
             speakWord(es);
+            showToast(`✅ Added "${es}" (${en})`);
         }
 
         function shuffleWords() {
@@ -916,6 +1167,154 @@
             renderWords(currentWords);
         }
 
+        // Show Toast Notification
+        function showToast(message, duration = 4000) {
+            const toast = document.getElementById("toast");
+            if (!toast) return;
+            toast.innerHTML = message;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, duration);
+        }
+
+        // Check URL parameters / hash for shared word list
+        function checkUrlForSharedWords() {
+            try {
+                const hash = window.location.hash;
+                const searchParams = new URLSearchParams(window.location.search);
+                let encodedData = null;
+
+                if (hash && hash.includes("data=")) {
+                    encodedData = hash.split("data=")[1].split("&")[0];
+                } else if (searchParams.has("data")) {
+                    encodedData = searchParams.get("data");
+                }
+
+                if (encodedData) {
+                    const jsonStr = decodeURIComponent(escape(atob(decodeURIComponent(encodedData))));
+                    const importedWords = JSON.parse(jsonStr);
+
+                    if (Array.isArray(importedWords) && importedWords.length > 0) {
+                        let addedCount = 0;
+                        importedWords.forEach(item => {
+                            if (item && item.es && item.en) {
+                                const exists = spanishWords.some(w => w.es.toLowerCase() === item.es.toLowerCase());
+                                if (!exists) {
+                                    spanishWords.unshift(item);
+                                    addedCount++;
+                                }
+                            }
+                        });
+
+                        saveWordsToLocalStorage();
+                        currentWords = [...spanishWords];
+                        renderWords(currentWords);
+
+                        if (addedCount > 0) {
+                            showToast(`✨ Loaded ${addedCount} shared words! Saved to this device.`);
+                        } else {
+                            showToast(`ℹ️ All shared words are already saved on this device.`);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading shared words from URL:", e);
+            }
+        }
+
+        // Generate and copy Share Link with ALL custom words
+        function copyShareLink() {
+            try {
+                const payload = JSON.stringify(spanishWords);
+                const encodedData = encodeURIComponent(btoa(unescape(encodeURIComponent(payload))));
+                const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+                const shareUrl = `${baseUrl}#data=${encodedData}`;
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        showToast(`🔗 Share link copied! Open on any device to see all ${spanishWords.length} words.`);
+                    }).catch(() => {
+                        fallbackCopy(shareUrl);
+                    });
+                } else {
+                    fallbackCopy(shareUrl);
+                }
+            } catch (e) {
+                console.error(e);
+                showToast("❌ Could not generate share link.");
+            }
+        }
+
+        function fallbackCopy(text) {
+            const tempInput = document.createElement("input");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast(`🔗 Share link copied! Open on any device to see all ${spanishWords.length} words.`);
+        }
+
+        // Export JSON File
+        function exportWordsJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(spanishWords, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `spanish_words_${spanishWords.length}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast(`📥 Exported ${spanishWords.length} words to JSON!`);
+        }
+
+        // Import JSON File
+        function importWordsJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        let addedCount = 0;
+                        imported.forEach(item => {
+                            if (item && item.es && item.en) {
+                                const exists = spanishWords.some(w => w.es.toLowerCase() === item.es.toLowerCase());
+                                if (!exists) {
+                                    spanishWords.unshift(item);
+                                    addedCount++;
+                                }
+                            }
+                        });
+
+                        saveWordsToLocalStorage();
+                        filterWords();
+                        showToast(`📤 Successfully imported ${addedCount} new words!`);
+                    } else {
+                        showToast("❌ Invalid JSON file format.");
+                    }
+                } catch (err) {
+                    showToast("❌ Failed to parse JSON file.");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = "";
+        }
+
+        // Reset to initial words
+        function resetToDefaultWords() {
+            if (confirm("Are you sure you want to reset to default words? Your custom added words will be removed.")) {
+                spanishWords = [...initialSpanishWords];
+                saveWordsToLocalStorage();
+                filterWords();
+                showToast("🔄 Reset to default words.");
+            }
+        }
+
+        // Check for shared URL words on load
+        checkUrlForSharedWords();
         renderWords(currentWords);
     </script>
 </body>
